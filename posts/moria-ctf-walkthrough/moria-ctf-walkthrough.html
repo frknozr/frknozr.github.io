@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Moria 1.1 Ctf Walkthrough | synack.blog</title>
+	<meta charset="utf-8">
+    <meta name="description" content="synack.blog | Cybersecurity">
+    <meta name="author" content="Furkan Özer">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <link rel="stylesheet" href="../../static/css/base.css">
+    <link rel="stylesheet" href="../../static/css/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Crete+Round">
+    <link rel="stylesheet" href='https:/fonts.googleapis.com/css?family=PT+Sans&amp;subset=latin,latin-ext' type='text/css'>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Rancho&amp;effect=shadow-multiple">
+    <link rel="stylesheet" href="../../static/js/libs/google-code-prettify/prettify.css" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="../../static/css/asciinema-player.css">
+
+</head>
+<body>
+    <header>
+        <h1><a href="../../index.html"><span class="rancho">synack.blog</span></a></h1>
+        
+        <nav>
+            <ul>
+                <li><a href="#">bio</a></li>
+                <li><a href="mailto:frknozr@gmail.com">mail</a></li>
+                <li><a href="http://github.com/frknozr">github</a></li>
+                <li><a href="http://twitter.com/frknozr">twitter</a></li>
+            </ul>
+        </nav>
+        
+    </header>
+
+    <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+        <header>
+            <hgroup>
+                <time datetime="June 20, 2017, 2:44 a.m.">June 20 2017</time>
+                <h3><a itemprop="url" href="#">Moria 1.1 Ctf Walkthrough</a></h3>
+            </hgroup>
+        </header>
+
+        <section itemprop="articleBody">
+            <br>
+            <a href="https://www.vulnhub.com/entry/moria-11,187/">Vulnhub Link</a>
+            <br><br>
+            <div align="center"><img src="http://s2.quickmeme.com/img/14/142c61cf9f09ea7b91f798f52d7b134d546a70f31157f8440c813202245e944d.jpg"></div>
+
+            <h3>Service Enumeration</h3>
+
+            <pre><code>nmap -Pn -sV 192.168.88.44 -p-</code></pre>
+
+            <p>First of all, I ran nmap for port scanning. And i saw three different service which they are Ftp, Ssh and Http. And I started analyse these services one by one.</p>
+
+            <h4>Port 21: FTP</h4>
+            <p>
+            When i start digging a service, i search public exploits for services versions. Here, ı did it again but i can't found any known exploits. After all, ı made my general controls for ftp service. First, i checked anonymous connection and i made brute force with my little wordlist. But nothing shown up.
+            </p>
+            
+            <p>After these steps, i connected ftp port  and i saw this banner. Since the Balrog is interesting word so i added it in my wordlist.</p>
+
+            <pre><code>220 Welcome Balrog!</code></pre>
+
+           <h4>Port 22: SSH</h4>
+           <p>I checked known exploits for ssh service and i did brute force but they didn't work either.</p>
+
+            <h4>Port 80: HTTP</h4>
+
+            <p>When I visit http service, i saw this picture. And i realised i found my entry point.</p>
+
+            <div align="center"><img src="moria.jpg" width="70%"></div>
+
+            <p>When i faced an image, first ı focus on steganography and i start digging image file with exiftool, binwalk and steghide tools. I tried these tools but result is failure again.</p>
+
+            <p>after, i focused content of image. Image is showing the Moria gate which is Dwarven city in Lord of the rings movie. And there is a riddle for opening the gate.</p>
+
+            <p>I found this part of movie. In movie, Frodo found answer for riddle. Answer was Mellon which is means Friend in Elvish. I added this and other releveant words to my wordlist.(Frodo, Gandalf etc.) After, i tried brute force again and failed.</p>
+
+            <div align="center"><iframe width="640" height="360" src="https://www.youtube.com/embed/DgHCM68KkPY" frameborder="0" allowfullscreen></iframe></div>
+        
+            <p>And i used Nikto and Dirbuster for further recon. There was a  clue after all these failures.</p>
+
+            <div align="center"><img width="640px" src="dirbuster.png"></div>
+
+            <pre><code>http://192.168.88.44/w/h/i/s/p/e/r/the_abyss/</code></pre>
+
+            <p>When i visited the page, a random message was showing. I collected all the unique words in the messages thanks to the following script. And i added whole words to my wordlist. I tried brute force again but ....!</p>
+
+            <pre class="prettyprint lang-bsh"><code>root@frkn:~# GET http://192.168.88.44/w/h/i/s/p/e/r/the_abyss/
+Balin: "Be quiet, the Balrog will hear you!"
+</code></pre>
+
+            <pre class="prettyprint lang-bsh"><code>url="http://192.168.88.44/w/h/i/s/p/e/r/the_abyss/"
+for i in $(seq 1 100); do GET $url; done > temp
+grep -o -E '\w+' temp | sort -u -f
+</code></pre>
+
+<p>The sake of practising, i wrote these python scripts for extracting words from given input and generating expanded wordlist. They capable of getting input from stdin and normal file.</p>
+
+			<pre><code>url="http://192.168.88.44/w/h/i/s/p/e/r/the_abyss/"
+for i in $(seq 1 100); do GET $url; done | ./words.py | ./generate.py</code></pre>
+			
+			<a href="https://gist.github.com/frknozr/8a1c40fa8a54b4daf3dcdb2d1a530e5a">words.py</a> 
+			<p>It extracts unique words and discards stopwords like a, the etc.</p>
+
+			<a href="https://gist.github.com/frknozr/ad30aef8049d421efbbcc8c1d55d55bb">generate.py</a>
+			<p>It turns first character of word to capital letter for generating better wordlists. But it must be developed with new functions.</p>
+                       
+            
+            
+<h3>Enumeration is the key!</h3>
+<br>
+<div align="center">
+	<video class="visible playing" style="width:80%;" type="video/mp4" src="https://video.twimg.com/tweet_video/DC8hhNQXgAAnvEF.mp4" data-type="content" data-id="content" autoplay loop></video>
+</div>
+
+
+            <p>After all these failure attempts, i go back and started again. And i noticed meaning of random messages. Maybe port knocking was useful.</p>
+            
+            <div align="center"><img src="knocknock.png" width="600px"></div>
+            
+            <p>I started nmap scan for all ports. And i listened the traffic between Moria and my Kali with Wireshark. Normaly, closed ports sends RST-ACK packets against SYN packets. But there was SYN packets in traffic which is not belongs our open ports. I filtered these packets like below. And there was a other trace to follow.</p>
+            <pre><code>ip.src == 192.168.88.44 and not (tcp.flags.reset == 1 and tcp.flags.ack == 1) and tcp</code></pre>
+            <div align="center"><img src="1337.png" width="600px"></div>
+            <br>
+            <pre><code>tcpdump -r moria.pcap -n 'tcp and src 192.168.88.44 and not (tcp[13] & 4!=0 and tcp[13] & 16!=0)'</code></pre>
+            <div align="center"><img src="1337t.png" width="800px"></div>
+            <p>Port 1337 was sending SYN packets to <i>77,101,108,108,111,110,54,57<i> ports with ordered way. I tried port knocking with these sequence but i failed again.</p>
+            
+            <p>I played a lot with these numbers. And finally i looked Ascii characters. And yes, i found the key eventually. <span style="background-color: yellow"><strong>Mellon69</strong></span></p>
+
+            <div align="center"><img src="mellon69.png" width="600px"></div>
+        
+            <p>I added Mellon69 to my wordlist and started bruteforce again. After all these bruteforce i found the proper username. It was <span style="background-color: yellow"><strong>Balrog</strong></span>.</p>
+
+            <p>İFirst, i tried to connect to ssh for the quick access to shell. But it was didnt worked. Apparently i was should try another gate.</p>
+
+            <pre><code>WRONG GATE!</code></pre>
+        	
+        	<p>I gained access to Ftp with these credentials. After digging whole file system, ı found interesting directory in var/www/html. And i visited this page from my browser. There was a some usernames and their hashes.</p>
+
+        	<div align="center"><img src="prisoners.png" width="400px"></div>
+
+        	<p>When i analyse the page source, i realized that, salts and hash type was commented out.</p>
+
+        	<pre><code>6MAp84
+bQkChe
+HnqeN4
+e5ad5s
+g9Wxv7
+HCCsxP
+cC5nTr
+h8spZR
+tb9AWe
+
+MD5(MD5(Password).Salt)</code></pre>
+
+			<p>I combined usernames, hashes and salts. And i run john the ripper. JTH cracked hashes in a seconds.</p>
+
+			<div align="center"><img src="crack.png"></div>
+
+			<p>And i tried brute force again with these credentials. Yes, i was found new credentials for ssh.<span style="background-color: lightblue"><strong>Ori</strong></span>:<span style="background-color: yellow"><strong>spanky</strong></span> i had to privilige escalaiton now.</p>
+
+			<h3>Privilege Escalation</h3>
+           
+           <p>I use these scripts and sources when i enumerate linux hosts for privilege escalaiton.</p>
+
+           <ul>
+           	<li><a href="http://www.securitysift.com/download/linuxprivchecker.py">Linuxprivchecker.py</a></li>
+           	<li><a href="https://github.com/PenturaLabs/Linux_Exploit_Suggester/blob/master/Linux_Exploit_Suggester.pl">Linux_Exploit_Suggester.pl</a></li>
+           	<li><a href="http://pentestmonkey.net/tools/audit/unix-privesc-check">unix-privesc-check</a></li>
+           	<li><a href="https://blog.g0tmi1k.com/2011/08/basic-linux-privilege-escalation/">Gotmilk's Privesc Cheat Sheet</a></li>
+           </ul>
+           
+           <p>
+               First i checked kernel version for known exploits manualy. And i run other scripts. There was not a public exploit for this kernel. But i noticed that line.
+           </p>
+
+           <pre class="prettyprint lang-bsh"><code>./unix-privesc-check detailed | grep WARNING
+WARNING: Unencrypted Private SSH Key Found in /home/Ori/.ssh/id_rsa
+</code></pre>
+            
+            <p>
+            There was a private ssh key in Ori's home folder. I tried this key for root and finally i gained root shell.
+           </p>
+
+            <div align="center">
+                <asciinema-player src="asciicast-126052.json" cols="80" rows="24"></asciinema-player>
+            </div>
+
+<h1><span class="rancho">Bye</span></h1>
+             </section>
+            </article>
+    
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="../static/' +
+        'js/libs/jquery-1.7.1.min.js"><\/script>')</script>
+
+<!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- google code prettify -->
+<script src="../../static/js/libs/google-code-prettify/prettify.js"></script>
+<!-- end google code prettify -->
+
+<!-- scripts concatenated and minified via build script -->
+<script src="../../static/js/script.js"></script>
+
+<script type="text/javascript" src="../../static/js/asciinema-player.js"></script>
+
+
+<script type="text/javascript">
+    $(function () {
+        $(".load-more").on('click', function (event) {
+            $(this).fadeOut('fast', function () {
+                $(this).hide().nextAll().fadeIn();
+            }.bind(this));
+            return false;
+        });
+    });
+</script>
+
+</body>
+
+</html>
