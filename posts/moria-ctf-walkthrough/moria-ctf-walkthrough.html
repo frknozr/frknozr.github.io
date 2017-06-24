@@ -130,7 +130,7 @@ for i in $(seq 1 100); do GET $url; done | ./words.py | ./generate.py</code></pr
             <br>
             <pre><code>tcpdump -r moria.pcap -n 'tcp and src 192.168.88.44 and not (tcp[13] & 4!=0 and tcp[13] & 16!=0)'</code></pre>
             <div align="center"><img src="1337t.png" width="800px"></div>
-            <p>Port 1337 was sending SYN packets to <i>77,101,108,108,111,110,54,57<i> ports with ordered way. I tried port knocking with these sequence but i failed again.</p>
+            <p>Port 1337 was sending SYN packets to <i>77,101,108,108,111,110,54,57</i> ports with ordered way. I tried port knocking with these sequence but i failed again.</p>
             
             <p>I played a lot with these numbers. And finally i looked Ascii characters. And yes, i found the key eventually. <span style="background-color: yellow"><strong>Mellon69</strong></span></p>
 
