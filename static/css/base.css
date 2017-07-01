@@ -231,3 +231,9 @@ td { vertical-align: top; }
   margin-top: 3px !important;
   color: white;
 }
+
+.tag-project{
+  background-color: #59ABE3;
+  margin-top: 3px !important;
+  color: white;
+}

@@ -67,14 +67,14 @@
 
         <section itemprop="articleBody">
             <br>
-            <a href="https://dweepsecurity.blogspot.com.tr/2017/02/hi-there-in-this-blog-im-going-to-give.html">Original work is here</a>
-            <br><br>
+            <a href="https://dweepsecurity.blogspot.com.tr/2017/02/hi-there-in-this-blog-im-going-to-give.html">Original work is here. This post is just a reproduction.</a>
+            <br>
 
             <h3>Introduction</h3>
             <hr>
             <p>The executable files, registery keys and c&c domains created by malicious software are usually named with random generated strings. Main purpose of this method is to make it difficult to analyzing malware.</p>
             <br>
-            <p>Mostly, malwares use different and random urls for c&c communication. They generates these urls with spesific and complicated DGA(Domain Generation Algorithm). In this way, malware produces different urls each time it is run. So, this process makes it very difficult to detection and prevention all possible domain traffic.</p>
+            <p>Mostly, malwares use different and random urls for c&c communication. They generate these urls with spesific and complicated DGA(Domain Generation Algorithm). In this way, malware produces different urls each time it is run. So, this process makes it very difficult to detection and prevention all possible domain traffic.</p>
             <br>
             <p>
             For example, the payment urls for the latest Petya malware are as follows. <a href="#ref">[1]</a> 
@@ -114,7 +114,7 @@ xckjffnjivafxen.biz</code></pre>
 
             <ul>
                 <li>The probability of passing rainy to a cloudy weather is 10%.</li>
-                <li>The probability of passing ariny to a sunny weather if 40%.</li>
+                <li>The probability of passing rainy to a sunny weather is 40%.</li>
                 <li>If the first 10 hours of the day or the first 1 minute of the day are rainy, these states have no effect on the next situation.</li>
                 <li>These possibilities have no relationship with their predecessors.</li>
             </ul>
@@ -183,12 +183,15 @@ after this calculations 2-ngram will be --> mp {u:0.5,l:0.5}</code></pre>
                 <li>If this ngram or letter is not in the model, predetermined value(0.000001) used for this transition.</li>
                 <li>Logarithms(with base 2) of these values are summed</li>
                 <li>Word's evaluation value is calculated.</li>
-                <li>If evaluation value<a href="#ref">[3]</a> greater than total probability, word is random else word is legit.</li>
+                <li>If evaluation value<a href="#ref">[3]</a> greater than total probability, word is random otherwise word is legit.</li>
             </ol>
 
+            <pre><code>unknown_transition_prob = 0.000001
+evaluation value = len(word) * log(2,unknown_transition_prob) / 2.5</code></pre>
 
             <h3>Results</h3>
             <hr>
+            <p>I generated dataset from <a href="http://norvig.com/big.txt">this</a> document with <a href="https://gist.github.com/frknozr/8a1c40fa8a54b4daf3dcdb2d1a530e5a"> my script</a> which i use for extracting words from given document. And it works successfully with English. But algorithm don't work properly for other languages because of dataset. Actually mixing dataset in various languages affects performance badly.</p>
             <table class="table">
                 <thead>
                     <th>Domain</th>
@@ -204,6 +207,7 @@ after this calculations 2-ngram will be --> mp {u:0.5,l:0.5}</code></pre>
 
             <h3>Demo</h3>
             <hr>
+            <p>I used <a href="https://moz.com/top500">these</a> domains as dataset without tlds in demo. Results may vary according to the table above.</p>
             <div align="center"> 
                 <div class="input-group" id="adv-search">
                     <input type="text" class="form-control"  id="text" name="text" placeholder="Please enter text" />
@@ -224,8 +228,15 @@ after this calculations 2-ngram will be --> mp {u:0.5,l:0.5}</code></pre>
             <hr>
             <p><span style="background-color: #EC644B;color: white;">[1]</span> &nbsp;<a href="#ref">Symantec Emerging Threat Report</a></p>
             <p><span style="background-color: #EC644B;color: white;">[2]</span> &nbsp;<a href="#ref">Alienvault Open Threat Exchange</a> - <a href="#">Fortinet Blog Post about DGA</a></p>
-            <p><span style="background-color: #EC644B;color: white;">[3]</span> &nbsp;<a href="#ref">I use </a> &nbsp;<a href="https://twitter.com/asselmant">@asselmant's</a> &nbsp;<a href="#ref">formula for evaluation value. This formula sutiable for 2-grams, for different n values is should changed.</a></p>
+            <p><span style="background-color: #EC644B;color: white;">[3]</span> &nbsp;<a href="#ref">I use </a> &nbsp;<a href="https://twitter.com/asselmant">@asselmant's</a> &nbsp;<a href="#ref">formula for evaluation value. This formula sutiable for 2-grams, for different n values formula must be changed.</a></p>
+            <p><span style="background-color: #EC644B;color: white;">[*]</span> &nbsp;<a href="https://www.khanacademy.org/computing/computer-science/informationtheory/moderninfotheory/v/markov_chains">Origin of Markov Chains</a></p>
+            <p><span style="background-color: #EC644B;color: white;">[*]</span> &nbsp;<a href="http://setosa.io/ev/markov-chains/">Markov Chains Visually Explained</a></p>
+            <p><span style="background-color: #EC644B;color: white;">[*]</span> &nbsp;<a href="http://staff.estem-uc.edu.au/html/DTran/Publications/P51479.pdf">Theory Behind Markov Chains</a></p>
 <h1><span class="rancho">Bye</span></h1>
+            
+            <div>
+                <a href="https://twitter.com/share" class="twitter-share-button" data-via="frknozr" data-size="large" data-dnt="true">Tweet</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+            </div>
 
 			<div align="center">
 				
@@ -306,7 +317,7 @@ after this calculations 2-ngram will be --> mp {u:0.5,l:0.5}</code></pre>
 *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
 
 var disqus_config = function () {
-this.page.url = "http://synack.blog/posts/malicious-url-detection-with-markov-models.html";  // Replace PAGE_URL with your page's canonical URL variable
+this.page.url = "http://synack.blog/posts/malicious-url-detection-with-markov-model.html";  // Replace PAGE_URL with your page's canonical URL variable
 this.page.identifier = "synack.blog</span></a></h1>"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
 };
 (function() { // DON'T EDIT BELOW THIS LINE
