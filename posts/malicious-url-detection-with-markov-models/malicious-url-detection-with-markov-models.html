@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Malicious Url Detection with Markov Model | synack.blog</title>
+	<meta charset="utf-8">
+    <meta name="description" content="synack.blog | Cybersecurity">
+    <meta name="author" content="Furkan Özer">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <link rel="stylesheet" type="text/css" href="bootstrap.css">
+    <link rel="stylesheet" href="../../static/css/base.css">
+    <link rel="stylesheet" href="../../static/css/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Crete+Round">
+    <link rel="stylesheet" href='https:/fonts.googleapis.com/css?family=PT+Sans&amp;subset=latin,latin-ext' type='text/css'>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Rancho&amp;effect=shadow-multiple">
+    <link rel="stylesheet" href="../../static/js/libs/google-code-prettify/prettify.css" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="../../static/css/asciinema-player.css">
+
+    
+
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="angular.min.js"></script>
+    <script type="text/javascript" src="bootstrap.min.js"></script>
+    <script type="text/javascript" src="markov.js"></script>
+
+    <style type="text/css">
+        tr,td,th{
+            border: 1px solid lightblue;
+            text-align: center;
+            padding: 10px;
+            font-family: "Ubuntu Light";
+        }
+
+        pre{
+            border: none;
+            border-radius: 0px;
+            margin-left: 0px;
+            margin-right: 0px;
+        }
+    </style>
+
+</head>
+<body>
+    <header>
+        <h1><a href="../../index.html"><span class="rancho">synack.blog</span></a></h1>
+        
+        <nav>
+            <ul>
+                <li><a href="#">bio</a></li>
+                <li><a href="mailto:frknozr@gmail.com">mail</a></li>
+                <li><a href="http://github.com/frknozr">github</a></li>
+                <li><a href="http://twitter.com/frknozr">twitter</a></li>
+            </ul>
+        </nav>
+        
+    </header>
+
+    <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+        <header>
+            <hgroup>
+                <time datetime="July 01, 2017, 2:44 a.m.">July 01 2017</time>
+                <h3><a itemprop="url" href="#">Malicious Url Detection with Markov Model</a></h3>
+            </hgroup>
+        </header>
+
+        <section itemprop="articleBody">
+            <br>
+            <a href="https://dweepsecurity.blogspot.com.tr/2017/02/hi-there-in-this-blog-im-going-to-give.html">Original work is here</a>
+            <br><br>
+
+            <h3>Introduction</h3>
+            <hr>
+            <p>The executable files, registery keys and c&c domains created by malicious software are usually named with random generated strings. Main purpose of this method is to make it difficult to analyzing malware.</p>
+            <br>
+            <p>Mostly, malwares use different and random urls for c&c communication. They generates these urls with spesific and complicated DGA(Domain Generation Algorithm). In this way, malware produces different urls each time it is run. So, this process makes it very difficult to detection and prevention all possible domain traffic.</p>
+            <br>
+            <p>
+            For example, the payment urls for the latest Petya malware are as follows. <a href="#ref">[1]</a> 
+            </p>
+            
+            <pre><code>mischapuk6hyrn72.onion
+petya3jxfp2f7g3i.onion
+petya3sen7dyko2n.onion
+mischa5xyix2mrhd.onion
+mischapuk6hyrn72.onion
+petya3jxfp2f7g3i.onion
+petya3sen7dyko2n.onion</code></pre>
+            <br>
+            <p>Also there are other urls which collected from some threat intelligence feeds.<a href="#ref">[2]</a></p>
+
+            <pre><code>yyttyytyt.net
+vkjrosfox.com
+sljjjupfgagolpg.ru
+uftfesnodnjflwta.info
+vxagtvsyqxtrfcm.com
+wxphewjnfhlyyjj.net
+xckjffnjivafxen.biz</code></pre>
+            <br>
+            <p>It is easy to understand whether these urls are random by humans , but it is difficult for the machines. We will try to solve this problem with markov models.</p>
+           
+            <h3>Markov Model</h3>
+            <hr>
+            <p>Markov model was found by the Russian mathematician Andrei Andreyevich Markov.</p>
+            <br>
+            <p id="af">The Markov model will be defined in a very simple way avoiding hard mathematical equations. <a href="#af">Markov model is a stochastic process in which the transition from one state to another is not dependent on previous states(memorylessness) but only on the current state.</a></p>
+
+            
+
+            <div align="center"><img src="weather-model.png" width="70%"></div>
+            <br>
+            <p>For example, according the graph above.</p>
+
+            <ul>
+                <li>The probability of passing rainy to a cloudy weather is 10%.</li>
+                <li>The probability of passing ariny to a sunny weather if 40%.</li>
+                <li>If the first 10 hours of the day or the first 1 minute of the day are rainy, these states have no effect on the next situation.</li>
+                <li>These possibilities have no relationship with their predecessors.</li>
+            </ul>
+
+            <h3>Implementation</h3>
+            <hr>
+            <p>We will take advantage of the frequencies of the  English words when determining the likelihood of transition from one situation to another. When we find these frequencies we will first divide the words into n-grams, and then we record the frequency of the subsequent letter.</p>
+<br>
+            <p>For example, the 2-grams of the <span style="background-color: lightblue"><strong>computer</strong></span> word are as follows.</p>
+
+            <table class="table">
+                <thead>
+                    <th>2-gram&nbsp;&nbsp;&nbsp;</th><th>&nbsp;Subsequent Letter</th>
+                </thead>
+                <tbody>
+                    <tr><td>co</td><td>m</td></tr>
+                    <tr><td>om</td><td>p</td></tr>
+                    <tr><td>mp</td><td>u</td></tr>
+                    <tr><td>pu</td><td>t</td></tr>
+                    <tr><td>ut</td><td>e</td></tr>
+                    <tr><td>te</td><td>r</td></tr>
+                </tbody>
+            </table>
+<br>
+            <p>We will repeat this process for all words in dataset.Results for a simple dataset are as follows.</p>
+
+            <pre><code>#DATASET
+computer
+accomplished
+
+#RESULT
+
+co -> m     ac -> c     co -> {m:2}
+om -> p     cc -> o     om -> {p:2}
+mp -> u     co -> m     mp -> {u:1,l:1}
+pu -> t     om -> p     pu -> {t:1}
+ut -> e     mp -> l     ut -> {e:1}
+te -> r     pl -> i     te -> {r:1}
+            li -> s     ac -> {c:1}
+            is -> h     cc -> {o:1}
+            sh -> e     pl -> {i:1}
+            he -> d     li -> {s:1}
+                        is -> {h:1}
+                        sh -> {e:1}
+                        he -> {d:1}</code></pre>
+<br>
+            <p>After these steps, proportion of each letter will be calculated like this.</p>
+
+            <pre><code>selected 2-gram ->  mp {u:1,l:1}
+
+prob(u) = freq(u) / (freq(u) + freq(l))
+prob(u) = 1 / (1+1)
+prob(u) = 0.5
+
+after this calculations 2-ngram will be --> mp {u:0.5,l:0.5}</code></pre>
+<br>
+            <p>A part of our model will be like this.</p>
+
+            <div align="center"><img src="model.jpeg"></div>
+<br>
+            <p>Once the model has been created, the following steps are repeated to calculate whether a word is random.</p>
+
+            <ol>
+                <li>Word is divided into ngrams.</li>
+                <li>The probability of the subsequent letter for each ngram is obtained from the model.</li>
+                <li>If this ngram or letter is not in the model, predetermined value(0.000001) used for this transition.</li>
+                <li>Logarithms(with base 2) of these values are summed</li>
+                <li>Word's evaluation value is calculated.</li>
+                <li>If evaluation value<a href="#ref">[3]</a> greater than total probability, word is random else word is legit.</li>
+            </ol>
+
+
+            <h3>Results</h3>
+            <hr>
+            <table class="table">
+                <thead>
+                    <th>Domain</th>
+                    <th>Probability</th>
+                    <th>Evaluation Value</th>
+                    <th>Status</th>
+                </thead>
+                <tbody>
+                   <tr ><td >yyttyytyt</td><td>-79.7262742773</td><td>-71.7536468496</td><td>Random</td></tr><tr ><td >vkjrosfox</td><td>-105.202163363</td><td>-71.7536468496</td><td>Random</td></tr><tr ><td >sljjjupfgagolpg</td><td>-201.315685693</td><td>-119.589411416</td><td>Random</td></tr><tr ><td >uftfesnodnjflwta</td><td>-279.041959971</td><td>-127.562038844</td><td>Random</td></tr><tr ><td >vxagtvsyqxtrfcm</td><td>-259.110391401</td><td>-119.589411416</td><td>Random</td></tr><tr ><td >wxphewjnfhlyyjj</td><td>-259.110391401</td><td>-119.589411416</td><td>Random</td></tr><tr ><td >xckjffnjivafxen</td><td>-242.763785333</td><td>-119.589411416</td><td>Random</td></tr><tr ><td >mischapuk6hyrn72</td><td>-229.061035454</td><td>-127.562038844</td><td>Random</td></tr><tr ><td >petya3jxfp2f7g3i</td><td>-262.917746323</td><td>-127.562038844</td><td>Random</td></tr><tr ><td >petya3sen7dyko2n</td><td>-245.156102755</td><td>-127.562038844</td><td>Random</td></tr><tr ><td >mischa5xyix2mrhd</td><td>-229.061035454</td><td>-127.562038844</td><td>Random</td></tr><tr ><td >mischapuk6hyrn72</td><td>-229.061035454</td><td>-127.562038844</td><td>Random</td></tr><tr ><td >petya3jxfp2f7g3i</td><td>-262.917746323</td><td>-127.562038844</td><td>Random</td></tr><tr ><td >petya3sen7dyko2n</td><td>-245.156102755</td><td>-127.562038844</td><td>Random</td></tr><tr ><td >facebook</td><td>-13.6915254412</td><td>-63.7810194218</td><td>Legit</td></tr><tr ><td >skype</td><td>-1.32192809489</td><td>-39.8631371386</td><td>Legit</td></tr><tr ><td >cyberstruggle</td><td>-95.6548389158</td><td>-103.64415656</td><td>Legit</td></tr>
+
+                </tbody>
+            </table>
+
+            <h3>Demo</h3>
+            <hr>
+            <div align="center"> 
+                <div class="input-group" id="adv-search">
+                    <input type="text" class="form-control"  id="text" name="text" placeholder="Please enter text" />
+                    <div class="input-group-btn">
+                        <div class="btn-group" role="group">
+                            <button type="submit" class="btn btn-primary" onclick="calculate();"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button>
+                        </div>
+                    </div>
+                </div>
+
+                <br>
+                <div class="alert alert-success" id="message1" style="display: none;">message1</div>
+                <div class="alert alert-danger"  id="message2" style="display: none;" >message2</div>
+                <pre style="display: none" id="result-pre"><code id="result"></code></pre>
+            </div> 
+
+            <h3 id="ref">References and Notes</h3>
+            <hr>
+            <p><span style="background-color: #EC644B;color: white;">[1]</span> &nbsp;<a href="#ref">Symantec Emerging Threat Report</a></p>
+            <p><span style="background-color: #EC644B;color: white;">[2]</span> &nbsp;<a href="#ref">Alienvault Open Threat Exchange</a> - <a href="#">Fortinet Blog Post about DGA</a></p>
+            <p><span style="background-color: #EC644B;color: white;">[3]</span> &nbsp;<a href="#ref">I use </a> &nbsp;<a href="https://twitter.com/asselmant">@asselmant's</a> &nbsp;<a href="#ref">formula for evaluation value. This formula sutiable for 2-grams, for different n values is should changed.</a></p>
+<h1><span class="rancho">Bye</span></h1>
+
+			<div align="center">
+				
+				<div id="disqus_thread"></div>
+			</div>
+
+
+             </section>
+            </article>
+
+
+<script type="text/javascript">
+    var calculate = function(){
+        var word = $("#text").val();
+        result = run(word);
+        var m1 = "Probability = " + result["prob"];
+        var m2 = "Evaluation Value = " + result["eval"];
+        $("#result").html(m1 + "\n" + m2);
+        $("#result-pre").css("display","block");
+
+        if(result["status"]){
+            $("#message1").html("word seems legit");
+            $("#message1").css("display","block");
+            $("#message2").css("display","none");
+        }else{
+             $("#message2").html("word seems random");
+             $("#message2").css("display","block");
+             $("#message1").css("display","none");
+        }
+        
+    }
+</script>
+    
+
+
+<!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- google code prettify -->
+<script src="../../static/js/libs/google-code-prettify/prettify.js"></script>
+<!-- end google code prettify -->
+
+<!-- scripts concatenated and minified via build script -->
+<script src="../../static/js/script.js"></script>
+
+<script type="text/javascript" src="../../static/js/asciinema-player.js"></script>
+
+
+<script type="text/javascript">
+    $(function () {
+        $(".load-more").on('click', function (event) {
+            $(this).fadeOut('fast', function () {
+                $(this).hide().nextAll().fadeIn();
+            }.bind(this));
+            return false;
+        });
+    });
+</script>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-101612770-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+
+var disqus_config = function () {
+this.page.url = "http://synack.blog/posts/malicious-url-detection-with-markov-models.html";  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = "synack.blog</span></a></h1>"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://synack-blog.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+<script id="dsq-count-scr" src="//synack-blog.disqus.com/count.js" async></script>
+</body>
+
+</html>
