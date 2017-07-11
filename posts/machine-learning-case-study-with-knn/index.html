@@ -69,7 +69,7 @@
 
             <h3>Introduction</h3>
             <hr>
-            <p>These days, machine learning applications in the cyber security domain are very popular. Since i started to take <a href="https://www.coursera.org/learn/python-machine-learning/">Applied Machine Learning in Python course</a>, I am trying to apply machine learning algorithms to infosec cases. In this article, I tried to detect dos/ddos attacks with K-Nearest-Neighbor algorithm which is inredibly accurate and simple.
+            <p>These days, machine learning applications in the cyber security domain are very popular. Since i started to take <a href="https://www.coursera.org/learn/python-machine-learning/">Applied Machine Learning in Python course</a>, I am trying to apply machine learning algorithms to infosec cases. In this article, I tried to detect dos/ddos attacks with K-Nearest-Neighbors algorithm which is inredibly accurate and simple.
             </p>
 
             <p>I coded this project with python and the following commonly used libraries.</p>
@@ -278,9 +278,9 @@ Testing with selected features
 
 			<h3>Building Model</h3>
 			<hr>
-			<p>The second stage of machine learning process is to train model with preprocessed data. With this model we will classify previously unseen data. As I said before, I create model with  K-Nearest-Neighbor algorithm.</p>
+			<p>The second stage of machine learning process is to train model with preprocessed data. With this model we will classify previously unseen data. As I said before, I create model with  K-Nearest-Neighbors algorithm.</p>
 
-			<h3>K-Nearest-Neighbor Algorithm</h3>
+			<h3>K-Nearest-Neighbors Algorithm</h3>
 			<hr>
 			<p>KNN is supervised machine learning algorithm. So, it needs labeled data for creating model. KNN classifies the sample according to the class of nearest K point to sample point. It is called majority voting. Obviously, it's so simple but incredibly powerfull.</p>
 			<br>
@@ -290,7 +290,7 @@ Testing with selected features
 			<br>
 			<p>As it seen figure above. Class of new sample is <strong>class one</strong> when k equal one. If k equal three then sample's class will be <strong>class 2</strong>.</p>
 
-			<p>Normally time complexity for training KNN algorithm is O(1). So, it copies all data to generic array. But with this way, prediction complexity will be O(kdn) approximately. k for neighbor count, d for feature dimension and n for training sample size. In prediction phase, algorithm compares new sample with all data and select k nearest point. This takes a lot of time with large datasets. But in scikit-learn, KNN uses kdtree or balltree data structures default instead of array. These data structures decrease prediction time significantly but increase training time little bit. Time complexity for train kdtree is O(nlogn), predicton time complexity is O(klogn) in average. <a href="#ref">[3]</a></p>
+			<p>Normally time complexity for training KNN algorithm is O(1). So, it copies all data to generic array. But with this way, prediction complexity will be O(kdn) approximately. k for neighbors count, d for feature dimension and n for training sample size. In prediction phase, algorithm compares new sample with all data and select k nearest point. This takes a lot of time with large datasets. But in scikit-learn, KNN uses kdtree or balltree data structures default instead of array. These data structures decrease prediction time significantly but increase training time little bit. Time complexity for train kdtree is O(nlogn), predicton time complexity is O(klogn) in average. <a href="#ref">[3]</a></p>
 
 			<p>I implemented KNN algorithm with normal way but it is so slow with large datasets in testing phase. Code is <a href="https://github.com/frknozr/knn/blob/master/knn_classifier.py">here</a>.</p>
 
