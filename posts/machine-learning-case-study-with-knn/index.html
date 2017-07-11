@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Machine learning case study with KNN | synack.blog</title>
+	   <meta charset="utf-8">
+    <meta name="description" content="synack.blog | Cybersecurity">
+    <meta name="author" content="Furkan Özer">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <link rel="stylesheet" type="text/css" href="bootstrap.css">
+    <link rel="stylesheet" href="../../static/css/base.css">
+    <link rel="stylesheet" href="../../static/css/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Crete+Round">
+    <link rel="stylesheet" href='https:/fonts.googleapis.com/css?family=PT+Sans&amp;subset=latin,latin-ext' type='text/css'>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Rancho&amp;effect=shadow-multiple">
+    <link rel="stylesheet" href="../../static/js/libs/google-code-prettify/prettify.css" type="text/css"/>
+    
+
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="bootstrap.min.js"></script>
+
+    <style type="text/css">
+        tr,td,th{
+            border: 1px solid lightblue;
+            text-align: center;
+            padding: 3px;
+            font-family: "Ubuntu Light";
+        }
+
+        #kdd-table{
+            font-size: 15px;
+        }
+
+        pre{
+            border: none;
+            border-radius: 0px;
+            margin-left: 0px;
+            margin-right: 0px;
+        }
+    </style>
+
+</head>
+<body>
+    <header>
+        <h1><a href="../../index.html"><span class="rancho">synack.blog</span></a></h1>
+        
+        <nav>
+            <ul>
+                <li><a href="#">bio</a></li>
+                <li><a href="mailto:frknozr@gmail.com">mail</a></li>
+                <li><a href="http://github.com/frknozr">github</a></li>
+                <li><a href="http://twitter.com/frknozr">twitter</a></li>
+            </ul>
+        </nav>
+        
+    </header>
+
+    <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+        <header>
+            <hgroup>
+                <time datetime="July 10, 2017, 2:44 a.m.">July 10 2017</time>
+                <h3><a itemprop="url" href="#">Machine learning case study with KNN</a></h3>
+            </hgroup>
+        </header>
+
+        <section itemprop="articleBody">
+
+            <h3>Introduction</h3>
+            <hr>
+            <p>These days, machine learning applications in the cyber security domain are very popular. Since i started to take <a href="https://www.coursera.org/learn/python-machine-learning/">Applied Machine Learning in Python course</a>, I am trying to apply machine learning algorithms to infosec cases. In this article, I tried to detect dos/ddos attacks with K-Nearest-Neighbor algorithm which is inredibly accurate and simple.
+            </p>
+
+            <p>I coded this project with python and the following commonly used libraries.</p>
+
+            <ul>
+                <li>scikit-learn</li>
+                <li>pandas</li>
+            </ul>
+
+            <p>I used KDDCUP99 dataset for training. Normally, this dataset shouldn't be used for training the real systems<a href="#ref">[1]</a>. Since this study is for learning purposes I used this dataset freely.</p>
+
+            <h3 style="font-size:30px">KDDCup99 Dataset</h3>
+            <hr>
+            <p><a href="http://kdd.ics.uci.edu/databases/kddcup99/kddcup99.html">K99 dataset</a> created by DARPA in 1998. And it used at <a href="http://www.kdd.org/kdd-cup">KDD-CUP</a> competition in 1999. That's why it's named KDDCup99. Dataset contains 41 features. Some of these features extracted from network packets. But 10 of these features are host-based information and only gained from compromised hosts. For example: </p>
+
+            <ul>
+                <li>su_attempted</li>
+                <li>num_shells</li>
+                <li>num_access_file</li>
+            </ul>
+
+            <p>I deleted these host-based features. Because I inspect only network packets for detection.</p>
+
+            <p>Part of the dataset is shown below.</p>
+
+            <div class="table-responsive" id="kdd-table">
+
+            <table class="table">
+                <thead>
+                    <th>duration</th>
+                    <th>protocol_type</th>
+                    <th>service</th>
+                    <th>flag</th>
+                    <th>src_bytes</th>
+                    <th>dst_bytes</th>
+                    <th>land</th>
+                    <th>wrong_fragment</th>
+                    <th>urgent</th>
+                    <th>hot</th>
+                    <th>num_failed_logins</th>
+                    <th>logged_in</th>
+                    <th>num_compromised</th>
+                    <th>root_shell</th>
+                    <th>su_attempted</th>
+                    <th>num_root</th>
+                    <th>num_file_creations</th>
+                    <th>num_shells</th>
+                    <th>num_access_files</th>
+                    <th>num_outbound_cmds</th>
+                    <th>is_host_login</th>
+                    <th>is_guest_login</th>
+                    <th>count</th>
+                    <th>srv_count</th>
+                    <th>serror_rate</th>
+                    <th>srv_serror_rate</th>
+                    <th>rerror_rate</th>
+                    <th>srv_rerror_rate</th>
+                    <th>same_srv_rate</th>
+                    <th>diff_srv_rate</th>
+                    <th>srv_diff_host_rate</th>
+                    <th>dst_host_count</th>
+                    <th>dst_host_srv_count</th>
+                    <th>dst_host_same_srv_rate</th>
+                    <th>dst_host_diff_srv_rate</th>
+                    <th>dst_host_same_src_port_rate</th>
+                    <th>dst_host_srv_diff_host_rate</th>
+                    <th>dst_host_serror_rate</th>
+                    <th>dst_host_srv_serror_rate</th>
+                    <th>dst_host_rerror_rate</th>
+                    <th>dst_host_srv_rerror_rate</th>
+                    <th>label</th>
+                </thead>
+                <tbody>
+                    
+                    <tr><td>0</td><td>tcp</td><td>http</td><td>SF</td><td>181</td><td>5450</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>8</td><td>8</td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.00</td><td>1.00</td><td>0.00</td><td>0.00</td><td>9</td><td>9</td><td>1.00</td><td>0.00</td><td>0.11</td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.00</td><td>normal</td></tr>
+
+                    <tr><td>0</td><td>tcp</td><td>http</td><td>SF</td><td>239</td><td>486</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>8</td><td>8</td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.00</td><td>1.00</td><td>0.00</td><td>0.00</td><td>19</td><td>19</td><td>1.00</td><td>0.00</td><td>0.05</td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.00</td><td>normal</td></tr>
+
+
+                    <tr><td>0</td><td>tcp</td><td>http</td><td>SF</td><td>235</td><td>1337</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>8</td><td>8</td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.00</td><td>1.00</td><td>0.00</td><td>0.00</td><td>29</td><td>29</td><td>1.00</td><td>0.00</td><td>0.03</td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.00</td><td>normal</td></tr>
+
+
+                    <tr><td>0</td><td>tcp</td><td>http</td><td>SF</td><td>219</td><td>1337</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>6</td><td>6</td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.00</td><td>1.00</td><td>0.00</td><td>0.00</td><td>39</td><td>39</td><td>1.00</td><td>0.00</td><td>0.03</td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.00</td><td>normal</td></tr>
+
+                </tbody>
+            </table>
+            </div>
+            <br>
+            <p>Also, dataset contains 22 different attack types as label. Attack types are shown below.</p>
+
+            <pre><code>- ftp_write
+- guess_passwd
+- imap
+- ipsweep
+- land
+- loadmodule
+- multihop
+- neptune
+- nmap
+- perl
+- phf
+- pod
+- portsweep
+- rootkit
+- satan
+- smurf
+- spy
+- teardrop
+- warezclient
+- warezmaster
+            </code></pre>
+
+            <p>I aggregated and eliminated some of these labels because we will only detect DoS/DDoS traffic. Nmap, buffer overflow and other similiar attack types are out of our scope.</p>
+
+            <p>As i said before, K99 dataset shouldn't used with real network ids system. Because, dataset contains some obsolote attacks and host-based features. These features can't be extracted from network packets by network intrusion detection system.</p>
+
+            <h3>Machine Learning Phases</h3>
+            <hr>
+            <p>General machine learning process has 4 stage:</p>
+
+            <ul>
+                <li>Preprocessing data</li>
+                <li>Building model</li>
+                <li>Model training</li>
+                <li>Testing an optimization</li>
+            </ul>
+
+            <h3>Preprocessing Data</h3>
+            <hr>
+            <p>In this phase, dataset must be analyzed and visualized carefully. If there are errors or missing values in dataset</p>
+
+            <ol>
+                <li>If these errors are too many in one feature, this feature can be deleted.</li>
+                <li>These errors can be replaced with mean of this attribute.</li>
+            </ol>
+
+            <p>After data clenaing, values must be normalized. A lot of techinuques used for data normalization. These techniques must be examined very well and appropirate method for dataset should selected. For example:</p>
+
+            <pre><code>#for <strong>mass</strong> attribute 
+sample = mass[i]
+min_value = min(mass)
+max_value = max(mass)
+normalized_sample = (sample - min_value) / (max_value - min_value)
+</code></pre>
+
+            
+            <p>K99 dataset is a preprocessed, normalized and well cleaned data. Therefore, dataset doesn't contain any error. So, i passed these phases.</p>
+
+            <p>We may need to change feature types for our algorithm. For instance, K99 dataset contains categorical(protocol_type) variables. But categorical values can't be used with KNN algoritm. So, we need to delete or transform these data into numerical values. Categorical features in dataset are as follows.</p>
+
+            <ul>
+                <li>protocol_type</li>
+                <li>service</li>
+                <li>flag</li>
+                <li>land</li>
+            </ul>
+
+            <p>Only <strong>land</strong> feature expressed with numerical values. So I used this feature as it is. But I transformed other 3 features into numerical values. For this purpose, I found all different values with command below. And I numerated this values from 0 to 3. I did this transformation for other two features.</p>
+
+            <pre><code>cat kddcup_data | cut -d"," -f2 | sort | uniq
+icmp
+tcp
+udp
+</code></pre>
+
+			<table class="table">
+				<thead>
+					<th>Protocol Type</th>
+					<th>Value</th>
+				</thead>
+				<tbody>
+					<tr><td>ICMP</td><td>0</td></tr>
+					<tr><td>TCP</td><td>1</td></tr>
+					<tr><td>UDP</td><td>2</td></tr>
+				</tbody>
+			</table>
+
+			<p>I automatized all work up to this stage with <a href="https://github.com/frknozr/knn/blob/master/preporecess.py">this</a> script.</p>
+
+			<p>Afterwards, we may select valuable features for dataset. Feature selection process should made by domain expert. Good selection provides more accurate model and fast prediction. </p>
+
+            <p><strong>Firstly</strong>, we should analyze features in terms of usability. K99 dataset has host-based features and these features aren't usable for our case. Therefore, I omitted host-based features.(10-22)</p>
+
+            <p><strong>Secondly</strong>, we might use different feature selection algorithm or use PCA(Principal Component Analysis) for combining and reducing features. I used Select-K-Best method for feature selection in this study. The Select-K-Best algorithm tests the model with different feature subsets to find the desired K number of features, and measures the success of the model according to the desired metric. (Eg: chi2, f_classif, mutual_info_classif <a href="#ref">[2]</a>)</p>
+
+            <div align="center">
+            	<img src="feature-selection.png">
+            </div>
+
+            <p>I tested model with full features and selected 5 features. So model accuracy is almost the same but evaluation time is differ. Test code is <a href="https://github.com/frknozr/knn/blob/master/knn.py">here</a>.</p>
+
+            <pre><code>frkn@frkn:~/Desktop/applied_ml$ python knn.py
+Testing with full data
+[+] Classifier trained in 3.27163791656
+[+] Model Evaluated in 4.10666203499
+[!] Test score is 0.999297772534
+-------------------------------------------------
+Testing with selected features
+[+] Selected features
+[-->] ['duration', 'src_bytes', 'dst_bytes', 'count', 'dst_host_srv_count']
+[+] Classifier trained in 1.65853691101
+[+] Model Evaluated in 0.355732917786
+[!] Test score is 0.999044970647
+-------------------------------------------------
+</code></pre>
+
+			<h3>Building Model</h3>
+			<hr>
+			<p>The second stage of machine learning process is to train model with preprocessed data. With this model we will classify previously unseen data. As I said before, I create model with  K-Nearest-Neighbor algorithm.</p>
+
+			<h3>K-Nearest-Neighbor Algorithm</h3>
+			<hr>
+			<p>KNN is supervised machine learning algorithm. So, it needs labeled data for creating model. KNN classifies the sample according to the class of nearest K point to sample point. It is called majority voting. Obviously, it's so simple but incredibly powerfull.</p>
+			<br>
+			<div align="center">
+				<img src="knn.png">
+			</div>
+			<br>
+			<p>As it seen figure above. Class of new sample is <strong>class one</strong> when k equal one. If k equal three then sample's class will be <strong>class 2</strong>.</p>
+
+			<p>Normally time complexity for training KNN algorithm is O(1). So, it copies all data to generic array. But with this way, prediction complexity will be O(kdn) approximately. k for neighbor count, d for feature dimension and n for training sample size. In prediction phase, algorithm compares new sample with all data and select k nearest point. This takes a lot of time with large datasets. But in scikit-learn, KNN uses kdtree or balltree data structures default instead of array. These data structures decrease prediction time significantly but increase training time little bit. Time complexity for train kdtree is O(nlogn), predicton time complexity is O(klogn) in average. <a href="#ref">[3]</a></p>
+
+			<p>I implemented KNN algorithm with normal way but it is so slow with large datasets in testing phase. Code is <a href="https://github.com/frknozr/knn/blob/master/knn_classifier.py">here</a>.</p>
+
+			<h3>Implementation</h3>
+			<hr>
+			<p>Implementation is also simple with scikit-learn. First, we need install and import libraries.</p>
+
+			<pre><code>import pandas as pd
+from sklearn.model_selection import train_test_split #for creating train and test dataset from all data
+from sklearn.neighbors import KNeighborsClassifier #scikit-learn KNN class
+from sklearn.feature_selection import SelectKBest #for selecting features
+from sklearn.feature_selection import chi2 #success metric for select-k-best</code></pre>
+
+			<p>After, we need read and split data to training data and class label. Dataset file must contains feature names as header. Pandas read function, reads and stores these feature names as keys of dictionary.</p>
+
+	<pre><code>def get_features(data):
+  features = []
+  for key in data.keys():
+	features.append(key)
+  features.remove("label")	# i remove class labels from features
+  return features
+
+data = pd.read_csv(filename)
+features = get_features(data)
+X = data[features] # train data
+y = data["label"]	 # class labels
+	</code></pre>
+
+	<p>We need to select best features now.</p>
+
+	<pre><code>selector = SelectKBest(score_func=chi2,k=5) # selector instance with chi2 metric
+selector.fit(X,y) # calculating best five features
+indexes_selected = selector.get_support(indices=True) # extracting features indexes
+selected_features = [] # it will contain features names
+for i in indexes_selected:
+  selected_features.append(features[i])
+
+X = data[selected_features] # new training data with selected features</code></pre>
+
+<p>If we will train and test model with the same data, we need to split dataset into two. After this partition we can create classifier instance and train it. And we can evaluate score with testset.</p>
+
+<pre><code>X_train, X_test, y_train, y_test = train_test_split(X,y) #split data into two poart
+knn = KNeighborsClassifier(n_neighbors = 5) # creating classifier instance with 5 neighbors
+knn.fit(X_train,y_train) # training the model
+score = knn.score(X_test,y_test) #evaluating the model</code></pre>
+
+<p>Complete script is <a href="https://github.com/frknozr/knn/blob/master/knn.py">here</a>.</p>
+
+<h3>Testing with Real Data</h3>
+<hr>
+<p>Model score is about <strong>0.99</strong> ,  but this value seems very unreal. And I don't trust K99 dataset so much. So, I tried to test model with some real data. I can't same features from pcaps very well. And i found <a href="https://github.com/AI-IDS/kdd99_feature_extractor">KDDCUP99 Feature Extractor</a> script as a result of long search. I compiled this code with Jetbrains Clion. It made building c++ code pretty easy.</p>
+
+<p>First, I started syn flood with Hping and recorded with Wireshark.</p>
+
+<pre><code>hping3 -S IP --flood</code></pre>
+
+<p> After, I recorded some normal traffic like visiting facebook, telnet, file download etc. And I used kddcup99 extracor to extracting data from pcaps. I preprocessed extracted data with <a href="https://github.com/frknozr/knn/blob/master/preprocess_real.py">this</a> script. After these steps, I tested model with this data. Surprisingly, it works like a charm.</p>
+
+<p>There was <strong>65537</strong> samples in dos-attack data. Some of them syn packet and some of them rst-ack answer packets. Classifier classified <strong>65089</strong> packets as a dos attack and <strong>448</strong> packets as a normal.</p>
+<pre><code>> print len(packets)
+65537
+> print result
+{'dos': 65089, 'normal': 448}</code></pre>
+
+<p>And I tested model with normal pcap. Extracted data has <strong>127</strong> sample. Classifier classified all packets as normal.</p>
+
+<pre><code>> print len(packets)
+127
+> print result
+{'normal': 127}</code></pre>
+
+<p>Lastly, these test results are very good. But may be unreliable. Please, create your model and test it different pcaps. If there is a mistake, please contact and we fix it together.</p>
+
+<p><strong>Note: </strong> I used KNN again in this <a href="https://www.kaggle.com/dalpozz/creditcardfraud">kaggle competition</a> because i didn't trust theese result very much. But surprisingly, success rate about 0.98 again &#x1F603</p>
+
+<h3>Future Works</h3>
+<hr>
+I want to work on this project a little more. Maybe I will implement kddcup99 feature extractor with scapy and i will make real time intrusion detection system. Also I want to try other machine learning algorithm on this field. If you interested in please contact.
+
+
+			<h3 id="ref">References</h3>
+            <hr>
+            <p><span style="background-color: #EC644B;color: white;">[1]</span> &nbsp;<a href="http://www.kdnuggets.com/news/2007/n18/4i.html">KDD Cup '99 Dataset Considered Harmful</a></p>
+            <p><span style="background-color: #EC644B;color: white;">[2]</span> &nbsp;<a href="http://scikit-learn.org/stable/modules/feature_selection.html">Feature Selection with Scikit-learn</a></p>
+            <p>
+             <span style="background-color: #EC644B;color: white;">[3]</span> &nbsp;
+             	<a href="http://www.alglib.net/other/nearestneighbors.php">Time Complexity of KNN</a>
+            </p>
+            <p>
+             <span style="background-color: #EC644B;color: white;">[*]</span> &nbsp;
+             	<a href="http://www.cs.ccsu.edu/~markov/ccsu_courses/datamining-3.html">Data Preprocessing</a>
+            </p>
+
+            <h1><span class="rancho">Bye</span></h1>
+		
+			<div>
+				<a href="https://twitter.com/share" class="twitter-share-button" data-via="frknozr" data-size="large" data-dnt="true">Tweet</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+			</div>
+
+			<div align="center">
+				<div id="disqus_thread"></div>
+			</div>
+
+
+            </section>
+    </article>
+
+
+    
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="../static/' +
+        'js/libs/jquery-1.7.1.min.js"><\/script>')</script>
+
+<!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- google code prettify -->
+<script src="../../static/js/libs/google-code-prettify/prettify.js"></script>
+<!-- end google code prettify -->
+
+<!-- scripts concatenated and minified via build script -->
+<script src="../../static/js/script.js"></script>
+
+<script type="text/javascript" src="../../static/js/asciinema-player.js"></script>
+
+
+<script type="text/javascript">
+    $(function () {
+        $(".load-more").on('click', function (event) {
+            $(this).fadeOut('fast', function () {
+                $(this).hide().nextAll().fadeIn();
+            }.bind(this));
+            return false;
+        });
+    });
+</script>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-101612770-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+
+var disqus_config = function () {
+this.page.url = "http://synack.blog/posts/machine-learning-case-study-with-knn/index.html";  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = "<title>Machine learning case study with KNN | synack.blog</title>"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://synack-blog.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+<script id="dsq-count-scr" src="//synack-blog.disqus.com/count.js" async></script>
+</body>
+
+</html>
