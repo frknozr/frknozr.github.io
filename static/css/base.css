@@ -243,3 +243,83 @@ td { vertical-align: top; }
   margin-top: 3px !important;
   color: white;
 }
+
+.tag-tips{
+  background-color: #59ABE3;
+  margin-top: 3px !important;
+  color: white;
+}
+
+.red-tag{
+  background-color: #F22613;
+  padding: 4px !important;
+  color: white;
+  display: inline;
+  border-radius: 10px;
+}
+
+.pentest-tag{
+  background-color: #6C7A89;
+  padding: 4px !important;
+  color: white;
+  display: inline;
+  border-radius: 10px;
+}
+
+.windows-tag{
+  background-color: #59ABE3;
+  padding: 4px !important;
+  color: white;
+  display: inline;
+  border-radius: 10px;
+}
+
+.linux-tag{
+  background-color: #F89406;
+  padding: 4px !important;
+  color: white;
+  display: inline;
+  border-radius: 10px;
+}
+
+.red-tag-s{
+  font-size: 15px;
+  background-color: #F22613;
+  padding: 4px !important;
+  color: white;
+  display: inline;
+  border-radius: 5px;
+}
+
+.pentest-tag-s{
+  font-size: 15px;
+  background-color: #6C7A89;
+  padding: 4px !important;
+  color: white;
+  display: inline;
+  border-radius: 5px;
+}
+
+.windows-tag-s{
+  font-size: 15px;
+  background-color: #59ABE3;
+  padding: 4px !important;
+  color: white;
+  display: inline;
+  border-radius: 5px;
+}
+
+.linux-tag-s{
+  font-size: 15px;
+  background-color: #F89406;
+  padding: 4px !important;
+  color: white;
+  display: inline;
+  border-radius: 5px;
+}
+
+
+.tips li{
+  margin-left: -20px;
+  margin-bottom: 20px;
+}
