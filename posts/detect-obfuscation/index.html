@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>detect-obfuscation | synack.blog</title>
+	<meta charset="utf-8">
+    <meta name="description" content="synack.blog | Cybersecurity">
+    <meta name="author" content="Furkan Özer">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <link rel="stylesheet" type="text/css" href="bootstrap.css">
+    <link rel="stylesheet" href="../../static/css/base.css">
+    <link rel="stylesheet" href="../../static/css/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Crete+Round">
+    <link rel="stylesheet" href='https:/fonts.googleapis.com/css?family=PT+Sans&amp;subset=latin,latin-ext' type='text/css'>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Rancho&amp;effect=shadow-multiple">
+    <link rel="stylesheet" href="../../static/js/libs/google-code-prettify/prettify.css" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="../../static/css/asciinema-player.css">
+
+    
+
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="angular.min.js"></script>
+    <script type="text/javascript" src="bootstrap.min.js"></script>
+    <script type="text/javascript" src="markov.js"></script>
+
+    <style type="text/css">
+        tr,td,th{
+            border: 1px solid lightblue;
+            text-align: center;
+            padding: 10px;
+            font-family: "Ubuntu Light";
+        }
+
+        pre{
+            border: none;
+            border-radius: 0px;
+            margin-left: 0px;
+            margin-right: 0px;
+        }
+    </style>
+
+</head>
+<body>
+    <header>
+        <h1><a href="../../index.html"><span class="rancho">synack.blog</span></a></h1>
+        
+        <nav>
+            <ul>
+                <li><a href="#">bio</a></li>
+                <li><a href="mailto:frknozr@gmail.com">mail</a></li>
+                <li><a href="http://github.com/frknozr">github</a></li>
+                <li><a href="http://twitter.com/frknozr">twitter</a></li>
+            </ul>
+        </nav>
+        
+    </header>
+
+    <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+        <header>
+            <hgroup>
+                <time datetime="July 01, 2017, 2:44 a.m.">July 01 2017</time>
+                <h3><a itemprop="url" href="#">Detect-obfuscation</a></h3>
+            </hgroup>
+        </header>
+
+        <section itemprop="articleBody">
+
+
+            <h3>Demo</h3>
+            <hr>
+            <p>I used <a href="https://moz.com/top500">these</a> domains as dataset without tlds in demo. Results may vary according to the table above.</p>
+            <div align="center"> 
+                <div class="input-group" id="adv-search">
+                    <input type="text" class="form-control"  id="text" name="text" placeholder="Please enter text" />
+                    <div class="input-group-btn">
+                        <div class="btn-group" role="group">
+                            <button type="submit" class="btn btn-primary" onclick="calculate();"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button>
+                        </div>
+                    </div>
+                </div>
+
+                <br>
+                <div class="alert alert-success" id="message1" style="display: none;">message1</div>
+                <div class="alert alert-danger"  id="message2" style="display: none;" >message2</div>
+                <pre style="display: none" id="result-pre"><code id="result"></code></pre>
+            </div>
+
+            <p>Project repo is <a href="https://github.com/frknozr/markovy">here</a></p>
+
+            
+<h1><span class="rancho">Bye</span></h1>
+            
+            <div>
+                <a href="https://twitter.com/share" class="twitter-share-button" data-via="frknozr" data-size="large" data-dnt="true">Tweet</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+            </div>
+
+			<div align="center">
+				
+				<div id="disqus_thread"></div>
+			</div>
+
+
+             </section>
+            </article>
+
+
+<script type="text/javascript">
+    var calculate = function(){
+        var word = $("#text").val();
+        result = run(word);
+        var m1 = "Probability = " + result["prob"];
+        var m2 = "Evaluation Value = " + result["eval"];
+        $("#result").html(m1 + "\n" + m2);
+        $("#result-pre").css("display","block");
+
+        if(result["status"]){
+            $("#message1").html("word seems legit");
+            $("#message1").css("display","block");
+            $("#message2").css("display","none");
+        }else{
+             $("#message2").html("word seems random");
+             $("#message2").css("display","block");
+             $("#message1").css("display","none");
+        }
+        
+    }
+</script>
+    
+
+
+<!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- google code prettify -->
+<script src="../../static/js/libs/google-code-prettify/prettify.js"></script>
+<!-- end google code prettify -->
+
+<!-- scripts concatenated and minified via build script -->
+<script src="../../static/js/script.js"></script>
+
+<script type="text/javascript" src="../../static/js/asciinema-player.js"></script>
+
+
+<script type="text/javascript">
+    $(function () {
+        $(".load-more").on('click', function (event) {
+            $(this).fadeOut('fast', function () {
+                $(this).hide().nextAll().fadeIn();
+            }.bind(this));
+            return false;
+        });
+    });
+</script>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-101612770-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+
+var disqus_config = function () {
+this.page.url = "http://synack.blog/posts/malicious-url-detection-with-markov-model.html";  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = "<title>Malicious Url Detection with Markov Model | synack.blog</title>"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://synack-blog.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+<script id="dsq-count-scr" src="//synack-blog.disqus.com/count.js" async></script>
+</body>
+
+</html>
