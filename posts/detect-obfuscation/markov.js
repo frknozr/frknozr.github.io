@@ -19,7 +19,9 @@ function readTextFile(file)
 }
 
 //var words = readTextFile("http://humanstxt.org/humans.txt")
-var words = readTextFile("new_corpus")
+var temp = readTextFile("new_corpus")
+var words = temp.split("\n");
+
 
 Array.prototype.contains = function(obj) {
     var i = this.length;
