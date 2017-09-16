@@ -19,7 +19,7 @@ function readTextFile(file)
 }
 
 //var words = readTextFile("http://humanstxt.org/humans.txt")
-var temp = readTextFile("new_corpus")
+var temp = readTextFile("https://frknozr.github.io/posts/detect-obfuscation/new_corpus")
 var words = temp.split("\n");
 
 
