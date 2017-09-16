@@ -19,7 +19,7 @@ function readTextFile(file)
 }
 
 //var words = readTextFile("http://humanstxt.org/humans.txt")
-var temp = readTextFile("https://synack.blog/posts/detect-obfuscation/half_corpus")
+var temp = readTextFile("half_corpus")
 var words = temp.split("\n");
 
 
