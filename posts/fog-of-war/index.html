@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Fog of War - 0 | synack.blog</title>
+	   <meta charset="utf-8">
+    <meta name="description" content="synack.blog | Cybersecurity">
+    <meta name="author" content="Furkan Özer">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <link rel="stylesheet" type="text/css" href="bootstrap.css">
+    <link rel="stylesheet" href="../../static/css/base.css">
+    <link rel="stylesheet" href="../../static/css/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Crete+Round">
+    <link rel="stylesheet" href='https:/fonts.googleapis.com/css?family=PT+Sans&amp;subset=latin,latin-ext' type='text/css'>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Rancho&amp;effect=shadow-multiple">
+    <link rel="stylesheet" href="../../static/js/libs/google-code-prettify/prettify.css" type="text/css"/>
+    
+
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="bootstrap.min.js"></script>
+
+    <style type="text/css">
+        tr,td,th{
+            border: 1px solid lightblue;
+            text-align: center;
+            padding: 3px;
+            font-family: "Ubuntu Light";
+        }
+
+        #kdd-table{
+            font-size: 15px;
+        }
+
+        pre{
+            border: none;
+            border-radius: 0px;
+            margin-left: 0px;
+            margin-right: 0px;
+        }
+    </style>
+
+</head>
+<body>
+    <header>
+        <h1><a href="../../index.html"><span class="rancho">synack.blog</span></a></h1>
+        
+        <nav>
+            <ul>
+                <li><a href="#">bio</a></li>
+                <li><a href="mailto:frknozr@gmail.com">mail</a></li>
+                <li><a href="http://github.com/frknozr">github</a></li>
+                <li><a href="http://twitter.com/frknozr">twitter</a></li>
+            </ul>
+        </nav>
+        
+    </header>
+
+    <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+        <header>
+            <hgroup>
+                <time datetime="April 14, 2017, 2:44 a.m.">July 10 2017</time>
+                <h3><a itemprop="url" href="#">Fog of War - 0</a></h3>
+            </hgroup>
+        </header>
+
+        <section itemprop="articleBody">
+
+            <h3>Lesson 11: You can’t change human nature.</h3>
+            <hr>
+            <br>
+            <p>It is a fact that human is the weakest ring of the chain in cyberspace. No matter how secure the network, applications and whole system is, humans can be deceived by simple social engineering attacks. And very large corporations can be breached liked this. But there is another fact that we forget: Attackers also human and they have weakness due to human nature.
+            </p>
+
+            <p>We can think the relation between attackers and defenders as a game. Humans learn opponents assets and moves. After that they calculate/think responses during the games for choosing best option. There are two important processes:</p>
+
+            <ul>
+                <li>Learnig</li>
+                <li>Calculating/Thinking</li>
+            </ul>
+
+            <p>A player knows how well the opponent learning and thinking process, and if he acts according to it, the player has a better chance of winning the game. But attackers have natural advantages in this game.</p>
+
+            <ol>
+                <li><b>Time</b> - Attackers have enough time for reconnasiance and implementing attacks</li>
+                <li><b>Ubiquity</b> - Unlike the defenders we can't know where is attackers in cyberspace</li>
+                <li><b>Public vulnerabilities</b> - Attackers have the ability to use public exploits so easily</li>
+            </ol>
+
+            <p>Besides theese, defender knows their infrastructure better and can manage that.</p>
+
+            <p>If defenders exploits opponents learning and thinking process with using different methods, they can win this hard game. Also according tho the methods used, the techniques tactics and procedures of attackers can be revealed.</p>
+
+            <p>In this article I am trying to explain Deception term for exploiting two important procesesses. Also in the next posts I will implement a lab for intrusion detection with practical deception.</p>
+
+            <h3>Deception</h3>
+            <hr>
+
+            <p><i>All warfare is based on deception. Hence, when we are able to attack, we must seem unable; when using our forces, we must appear inactive; when we are near, we must make the enemy believe we are far away; when far away, we must make him believe we are near. Hold out baits to entice the enemy. Feign disorder, and crush him.</i><br><b>Sun Tzu</b> </p>
+
+            <p>Deception is "Planned actions taken to mislead and/or confuse attackers and to thereby cause them to take (or not to take) specific actions that aid computer-security defenses".</p>
+
+            <p>As understood from the definition above, deception is a tool that can be used to exploit learning and thinking processes by giving attackers wrong information about the system, directing them to fake interfaces, and engaging them with unrealistic targets. For theese purposes we can use honey-files, honey-credentials, fake sites, artificial ports, fake service banners and honeypots.</p>
+
+            <h3>Killing the Kill Chain with Deception</h3>
+            <br>
+            <p>The general behavior pattern of attackers is similar. Firstly, they gain information about target and they choose best tools and tactics with this information. After that they deliver attack vector to the victim. And they move laterally and vertically from exploited assets for completing real mission. Even though there are a lot of definition in kinetic and cyber world for this pattern, the term Cyber Kill Chain widely known. Cyber Kill Chain was created by Lockheed Martin in 2011 for defining attackers actions formally.</p>
+
+            <div align="center">
+                <img src="ckc.png" width="60%" height="60%">
+            </div>
+            <br>
+            <p>We use some of these scenarios for different phases in Cyber Kill Chain.</p>
+
+                <ol>
+                    <li>Create fake whois record with e-mail and phone number</li>
+                    <li>Intentionally use some fake e-mails at social media</li>
+                    <li>Attackers will find and use for phishing these e-mails</li>
+                    <li>Reply spam mails with fake and random word attached mails</li>
+                    <li>Collect attackers information with mail and word document</li>
+                </ol>
+                <hr>
+                <ol>
+                    <li>Create artificial well-known ports and services on production server</li>
+                    <li>Change service banners with old and vulnerable one</li>
+                    <li>Add or change OS information in HTTP responses</li>
+                    <li>Change OS TCP behavior for avoiding/deceiving nmap OS detection</li>
+                    <li>Attackers will use wrong exploits and payloads with these fake data</li>
+                    <li>Record all traffic to artificial assets</li>
+                </ol>
+                <hr>
+                <ol>
+                    <li>Create fake websites in different ports</li>
+                    <li>Attackers may fuzz directories and scan vulnerabilities</li>
+                    <li>Open directory listing with some fake files</li>
+                    <li>Attackers may download some files and execute them</li>
+                    <li>And record all traffic to fake websites</li>
+                </ol>
+                <hr>
+                <ol>
+                    <li>Create fake domain users in Active Directory</li>
+                    <li>If someone use it generate alarm</li>
+                </ol>
+                <hr>
+                <ol>
+                    <li>Add fake,non-privileged users with hard password to linux boxes</li>
+                    <li>If attackers compromise a machine and gain hashes they waste of their times for cracking useless hashes</li>
+                </ol>
+                <hr>
+                <ol>
+                    <li>Create fake files seems important like PII or credit card information</li>
+                    <li>If someone touch these files generate alarm</li>
+                </ol>
+                <hr>
+
+            <p>This article is only basic introduction for using deception as a defence mechanism in cybersecurity. But as I mentioned before, in the next posts I will trying to implement a lab called Labyrinth in Amazon Web Services. I am going to collect new methods and scenarios synchronized with Cyber Kill Chain's steps. And I will test these method's intrusion detection capabilities. I will use Windows domain environment, Linux servers and some kind of services(Nginx, smb, ftp, tomcat) in lab. And i will collect, correlate and visualize with ELK stack.</p>
+
+            <div align="center">
+                <img src="Labyrinth.png">
+            </div>
+            <br>
+
+            <h3>Pros and Cons</h3>
+            <hr>
+
+            <p>Although deception may seem very beneficial theoretically, methods can be too risky to be used on live systems. In addition, the installation and management of these systems can put a lot of workload on the security team. Since i have not yet tried it in practice, I can't predict the consequences it may create, but i have listed some pros and cons as follows.</p>
+
+
+            <div class="table-responsive" id="kdd-table">
+
+                <table class="table">
+                    <thead>
+                        <th>Pros</th>
+                        <th>Cons</th>
+                    </thead>
+                    <tbody>
+                        
+                        <tr>
+                            <td>Slow downs attackers</td>
+                            <td>Extended Attack Surface</td>
+                        </tr>
+
+                        <tr>
+                            <td>Increases detection rate</td>
+                            <td>So much operational workload</td>
+                        </tr>
+
+                        <tr>
+                            <td>TTP Extraction</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td>Attribution and Counter Intelligence & Attack Ability</td>
+                            <td></td>
+                        </tr>
+
+
+                    </tbody>
+                </table>
+            </div>
+            <br>
+            
+			<h3 id="ref">References</h3>
+            <hr>
+            <p><span style="background-color: #EC644B;color: white;">[1]</span> &nbsp;<a href="https://www.amazon.com/Reverse-Deception-Organized-Threat-Counter-Exploitation/dp/0071772499">Reverse Deception</a></p>
+            <p><span style="background-color: #EC644B;color: white;">[2]</span> &nbsp;<a href="http://www.springer.com/cda/content/document/cda_downloaddocument/9783319326979-c2.pdf?SGWID=0-0-45-1579369-p179938846">Cyber Security Deception</a></p>
+
+            <h1><span class="rancho">Bye</span></h1>
+		
+			<div>
+				<a href="https://twitter.com/share" class="twitter-share-button" data-via="frknozr" data-size="large" data-dnt="true">Tweet</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+			</div>
+
+			<div align="center">
+				<div id="disqus_thread"></div>
+			</div>
+
+
+            </section>
+    </article>
+
+
+    
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="../static/' +
+        'js/libs/jquery-1.7.1.min.js"><\/script>')</script>
+
+<!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- google code prettify -->
+<script src="../../static/js/libs/google-code-prettify/prettify.js"></script>
+<!-- end google code prettify -->
+
+<!-- scripts concatenated and minified via build script -->
+<script src="../../static/js/script.js"></script>
+
+<script type="text/javascript" src="../../static/js/asciinema-player.js"></script>
+
+
+<script type="text/javascript">
+    $(function () {
+        $(".load-more").on('click', function (event) {
+            $(this).fadeOut('fast', function () {
+                $(this).hide().nextAll().fadeIn();
+            }.bind(this));
+            return false;
+        });
+    });
+</script>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-101612770-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+
+var disqus_config = function () {
+this.page.url = "http://synack.blog/posts/fog-of-war/index.html";  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = "<title>Fog of War - 0 | synack.blog</title>"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://synack-blog.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+<script id="dsq-count-scr" src="//synack-blog.disqus.com/count.js" async></script>
+</body>
+
+</html>
